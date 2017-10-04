@@ -1,12 +1,12 @@
+/* eslint-disable */
+
 module.exports = (function () {
   // Pollyfills
 
   // Production steps of ECMA-262, Edition 5, 15.4.4.17
   // Reference: http://es5.github.io/#x15.4.4.17
   if (!Array.prototype.some) {
-    Array.prototype.some = function (fun/*, thisArg*/) {
-      'use strict';
-
+    Array.prototype.some = function (fun) {
       if (this == null) {
         throw new TypeError('Array.prototype.some called on null or undefined');
       }
@@ -32,8 +32,7 @@ module.exports = (function () {
   // Production steps of ECMA-262, Edition 5, 15.4.4.18
   // Reference: http://es5.github.io/#x15.4.4.18
   if (!Array.prototype.forEach) {
-
-    Array.prototype.forEach = function (callback/*, thisArg*/) {
+    Array.prototype.forEach = function (callback) {
 
       var T, k;
 
@@ -98,4 +97,4 @@ module.exports = (function () {
       return this.substr(0, index) + replacement + this.substr(index + length);
     }
   }
-})();
+}());

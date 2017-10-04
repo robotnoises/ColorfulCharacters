@@ -23,15 +23,13 @@ function hex2rgb(hex) {
     } else if (isShorthand) {
       acc.push(parseInt((val + val), 16));
       acc.push(',');
-    } else {
-      if (buffer) {
+    } else if (buffer) {
         acc.push(parseInt((buffer + val), 16));
         acc.push(',');
         buffer = '';
       } else {
         buffer = val;
       }
-    }
 
     return acc;
   }, []).join('');
@@ -61,12 +59,15 @@ function hasRegex(characterMap) {
  * @param {*} color 
  */
 function colorize(character, color, options) {
+  var colorStyle = '';
+  var backgroundStyle = '';
+
   if (!character || !color) {
     return character || '';
   }
 
-  var colorStyle = options.changeColor ? color + ';' : '';
-  var backgroundStyle = options.changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
+  colorStyle = options.changeColor ? color + ';' : '';
+  backgroundStyle = options.changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
 
   return '<span style="color: ' + colorStyle + 'background: ' + backgroundStyle + '">' + character + '</span>';
 }

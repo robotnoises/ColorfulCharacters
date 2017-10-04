@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-require('./polyfills');
 var utils = require('./utils');
+require('./polyfills');
 
 /**
  * Result()
@@ -57,7 +57,7 @@ ColorfulCharacters.prototype.render = function (input) {
           var strippedRegex = key.substr(1, (key.length - 2));
           var re = new RegExp(strippedRegex, 'gi');
 
-          input.replace(re, function (match, offset, str) {
+          input.replace(re, function (match, offset) {
             buffer.push(new Result(utils.colorize(match, that._characterMap[key], that._options), offset, match.length));
             skips[offset] = true;
             return;
@@ -87,16 +87,17 @@ ColorfulCharacters.prototype.render = function (input) {
 };
 
 window.ColorfulCharacters = ColorfulCharacters;
+
 },{"./polyfills":2,"./utils":3}],2:[function(require,module,exports){
+/* eslint-disable */
+
 module.exports = (function () {
   // Pollyfills
 
   // Production steps of ECMA-262, Edition 5, 15.4.4.17
   // Reference: http://es5.github.io/#x15.4.4.17
   if (!Array.prototype.some) {
-    Array.prototype.some = function (fun/*, thisArg*/) {
-      'use strict';
-
+    Array.prototype.some = function (fun) {
       if (this == null) {
         throw new TypeError('Array.prototype.some called on null or undefined');
       }
@@ -122,8 +123,7 @@ module.exports = (function () {
   // Production steps of ECMA-262, Edition 5, 15.4.4.18
   // Reference: http://es5.github.io/#x15.4.4.18
   if (!Array.prototype.forEach) {
-
-    Array.prototype.forEach = function (callback/*, thisArg*/) {
+    Array.prototype.forEach = function (callback) {
 
       var T, k;
 
@@ -188,7 +188,8 @@ module.exports = (function () {
       return this.substr(0, index) + replacement + this.substr(index + length);
     }
   }
-})();
+}());
+
 },{}],3:[function(require,module,exports){
 // Utils
 
@@ -215,15 +216,13 @@ function hex2rgb(hex) {
     } else if (isShorthand) {
       acc.push(parseInt((val + val), 16));
       acc.push(',');
-    } else {
-      if (buffer) {
+    } else if (buffer) {
         acc.push(parseInt((buffer + val), 16));
         acc.push(',');
         buffer = '';
       } else {
         buffer = val;
       }
-    }
 
     return acc;
   }, []).join('');
@@ -253,12 +252,15 @@ function hasRegex(characterMap) {
  * @param {*} color 
  */
 function colorize(character, color, options) {
+  var colorStyle = '';
+  var backgroundStyle = '';
+
   if (!character || !color) {
     return character || '';
   }
 
-  var colorStyle = options.changeColor ? color + ';' : '';
-  var backgroundStyle = options.changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
+  colorStyle = options.changeColor ? color + ';' : '';
+  backgroundStyle = options.changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
 
   return '<span style="color: ' + colorStyle + 'background: ' + backgroundStyle + '">' + character + '</span>';
 }

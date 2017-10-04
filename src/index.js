@@ -1,5 +1,5 @@
-require('./polyfills');
 var utils = require('./utils');
+require('./polyfills');
 
 /**
  * Result()
@@ -56,7 +56,7 @@ ColorfulCharacters.prototype.render = function (input) {
           var strippedRegex = key.substr(1, (key.length - 2));
           var re = new RegExp(strippedRegex, 'gi');
 
-          input.replace(re, function (match, offset, str) {
+          input.replace(re, function (match, offset) {
             buffer.push(new Result(utils.colorize(match, that._characterMap[key], that._options), offset, match.length));
             skips[offset] = true;
             return;
