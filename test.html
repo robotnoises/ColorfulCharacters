@@ -5,7 +5,7 @@
   </head>
   <body>
     <div id="editor" contenteditable="true" style="height: 400px; width: 600px; margin: 100px auto; background: #fafafa;">
-
+      (word)
     </div>
 
     <button id="render">Render</button>
@@ -22,7 +22,8 @@
           '-': '#0f0',
           '/': '#0f0',
           '[': '#00f',
-          ']': '#00f'
+          ']': '#00f',
+          '/[a-zA-Z]/': '#00f'
         }, {
           changeColor: true,
           changeBackground: true

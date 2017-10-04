@@ -3,7 +3,7 @@
 // Production steps of ECMA-262, Edition 5, 15.4.4.17
 // Reference: http://es5.github.io/#x15.4.4.17
 if (!Array.prototype.some) {
-  Array.prototype.some = function(fun/*, thisArg*/) {
+  Array.prototype.some = function (fun/*, thisArg*/) {
     'use strict';
 
     if (this == null) {
@@ -31,66 +31,72 @@ if (!Array.prototype.some) {
 // Production steps of ECMA-262, Edition 5, 15.4.4.18
 // Reference: http://es5.github.io/#x15.4.4.18
 if (!Array.prototype.forEach) {
-  
-    Array.prototype.forEach = function(callback/*, thisArg*/) {
-  
-      var T, k;
-  
-      if (this == null) {
-        throw new TypeError('this is null or not defined');
+
+  Array.prototype.forEach = function (callback/*, thisArg*/) {
+
+    var T, k;
+
+    if (this == null) {
+      throw new TypeError('this is null or not defined');
+    }
+
+    // 1. Let O be the result of calling toObject() passing the
+    // |this| value as the argument.
+    var O = Object(this);
+
+    // 2. Let lenValue be the result of calling the Get() internal
+    // method of O with the argument "length".
+    // 3. Let len be toUint32(lenValue).
+    var len = O.length >>> 0;
+
+    // 4. If isCallable(callback) is false, throw a TypeError exception. 
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== 'function') {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    // 5. If thisArg was supplied, let T be thisArg; else let
+    // T be undefined.
+    if (arguments.length > 1) {
+      T = arguments[1];
+    }
+
+    // 6. Let k be 0.
+    k = 0;
+
+    // 7. Repeat while k < len.
+    while (k < len) {
+
+      var kValue;
+
+      // a. Let Pk be ToString(k).
+      //    This is implicit for LHS operands of the in operator.
+      // b. Let kPresent be the result of calling the HasProperty
+      //    internal method of O with argument Pk.
+      //    This step can be combined with c.
+      // c. If kPresent is true, then
+      if (k in O) {
+
+        // i. Let kValue be the result of calling the Get internal
+        // method of O with argument Pk.
+        kValue = O[k];
+
+        // ii. Call the Call internal method of callback with T as
+        // the this value and argument list containing kValue, k, and O.
+        callback.call(T, kValue, k, O);
       }
-  
-      // 1. Let O be the result of calling toObject() passing the
-      // |this| value as the argument.
-      var O = Object(this);
-  
-      // 2. Let lenValue be the result of calling the Get() internal
-      // method of O with the argument "length".
-      // 3. Let len be toUint32(lenValue).
-      var len = O.length >>> 0;
-  
-      // 4. If isCallable(callback) is false, throw a TypeError exception. 
-      // See: http://es5.github.com/#x9.11
-      if (typeof callback !== 'function') {
-        throw new TypeError(callback + ' is not a function');
-      }
-  
-      // 5. If thisArg was supplied, let T be thisArg; else let
-      // T be undefined.
-      if (arguments.length > 1) {
-        T = arguments[1];
-      }
-  
-      // 6. Let k be 0.
-      k = 0;
-  
-      // 7. Repeat while k < len.
-      while (k < len) {
-  
-        var kValue;
-  
-        // a. Let Pk be ToString(k).
-        //    This is implicit for LHS operands of the in operator.
-        // b. Let kPresent be the result of calling the HasProperty
-        //    internal method of O with argument Pk.
-        //    This step can be combined with c.
-        // c. If kPresent is true, then
-        if (k in O) {
-  
-          // i. Let kValue be the result of calling the Get internal
-          // method of O with argument Pk.
-          kValue = O[k];
-  
-          // ii. Call the Call internal method of callback with T as
-          // the this value and argument list containing kValue, k, and O.
-          callback.call(T, kValue, k, O);
-        }
-        // d. Increase k by 1.
-        k++;
-      }
-      // 8. return undefined.
-    };
+      // d. Increase k by 1.
+      k++;
+    }
+    // 8. return undefined.
+  };
+}
+
+if (!String.prototype.replaceAt) {
+  String.prototype.replaceAt = function (index, length, replacement) {
+    return this.substr(0, index) + replacement + this.substr(index + length);
   }
+}
 
 // Utils
 
@@ -101,7 +107,7 @@ if (!Array.prototype.forEach) {
  * 
  * @return '255, 255, 255'
  */
-function hex2rgb (hex) {
+function hex2rgb(hex) {
   var isShorthand = false;
   var buffer = ''; // can buffer up to 1 char
 
@@ -156,7 +162,7 @@ function colorize(character, color, options) {
   var colorStyle = options.changeColor ? color + ';' : '';
   var backgroundStyle = options.changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
 
-  return '<span style="color: ' + colorStyle + 'background: ' + backgroundStyle +'">' + character + '</span>';
+  return '<span style="color: ' + colorStyle + 'background: ' + backgroundStyle + '">' + character + '</span>';
 }
 
 /**
@@ -177,29 +183,12 @@ function processCharacters(characterMap, input, options) {
   }, []).join('');
 }
 
-/**
- * processRegex()
- *
- * @param {*} characterMap 
- * @param {*} input 
- */
-function processRegex(characterMap, input, options) {
-  var result = input || '';
-
-  Object.keys(characterMap).filter(function (key) {
-    return isRegex(key);
-  })
-  .forEach(function (key) {
-    var strippedRegex = key.substr(1, (key.length -2));
-    var re = new RegExp(strippedRegex, 'gi');
-
-    result = result.replace(re, function (match, offset, str) {
-      return colorize(match, characterMap[key], options);
-    });
-  });
-
-  return result;
+function Result(str, pos, len) {
+  this.str = str;
+  this.pos = pos;
+  this.len = len;
 }
+
 
 // ColorfulCharacters
 
@@ -209,18 +198,19 @@ function processRegex(characterMap, input, options) {
  * @param {*} options 
  */
 
- /**
-  * Example of a charactermap
-  * {
-      "(": "#f00",
-      ")": "#f00",
-      "/[a-zA-z]/": "#0f0",
-      "/[*+-/]/": "#00f"
-    }
-  */
+/**
+ * Example of a charactermap
+ * {
+     "(": "#f00",
+     ")": "#f00",
+     "/[a-zA-z]/": "#0f0",
+     "/[*+-/]/": "#00f"
+   }
+ */
 
 function ColorfulCharacters(characterMap, options) {
   this._characterMap = characterMap;
+  this._resultMap = new Map();
   this._options = {
     changeColor: options ? options.changeColor : true,
     changeBackground: options ? options.changeBackground : false
@@ -232,15 +222,48 @@ function ColorfulCharacters(characterMap, options) {
 
 ColorfulCharacters.prototype.render = function (input) {
   var that = this;
-  var result = '';
+  var stringToRender = input;
+  var buffer = [];
+  var skips = {};
 
   if (!input || typeof input !== 'string') {
     throw new Error('input must be a string');
   }
 
-  result = processCharacters(that._characterMap, input, that._options);
-  // return that._hasRegex ? processRegex(that._characterMap, result, that._options) : result;
-  return result; // we don't support regex right now.
+  // First, sweep the input for any regex matches
+  if (that._hasRegex) {
+    var firstPass = input;
+
+    Object.keys(that._characterMap).filter(function (key) {
+      return isRegex(key);
+    })
+      .forEach(function (key) {
+        var strippedRegex = key.substr(1, (key.length - 2));
+        var re = new RegExp(strippedRegex, 'gi');
+
+        firstPass.replace(re, function (match, offset, str) {
+          buffer.push(new Result(colorize(match, that._characterMap[key], that._options), offset, match.length));
+          skips[offset] = true;
+          return;
+        });
+      });
+  }
+  
+  // Process the remaining characters that haven't been captured by regex
+  stringToRender.split('').forEach(function (char, index) {
+    if (!skips[index] && that._characterMap[char]) {
+      buffer.push(new Result(colorize(char, that._characterMap[char], that._options), index, 1));
+    }
+  });
+
+  buffer.sort(function (a, b) {
+    return b.pos - a.pos;
+  })
+  .forEach(function (item) {
+    input = input.replaceAt(item.pos, item.len, item.str);
+  });
+
+  return input;
 };
 
 window.ColorfulCharacters = ColorfulCharacters;
