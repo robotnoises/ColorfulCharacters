@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>ColorfulCharacters Test</title>
-    <script src="public/colorfulcharacters.min.js"></script>
+    <script src="../public/colorfulcharacters.min.js"></script>
   </head>
   <body>
     <div id="editor" contenteditable="true" style="height: 400px; width: 600px; margin: 100px auto; background: #fafafa;">
@@ -21,9 +21,10 @@
           '+': '#0f0',
           '-': '#0f0',
           '/': '#0f0',
-          '[': '#00f',
-          ']': '#00f',
-          '/[a-zA-Z]/': '#00f'
+          '[': '#ffa500',
+          ']': '#ffa500',
+          '/[a-zA-Z]/': '#00f',
+          '/[0-9]/': '#9B30FF'
         }, {
           changeColor: true,
           changeBackground: true
