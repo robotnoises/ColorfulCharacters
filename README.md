@@ -4,7 +4,17 @@
 
 ## To Build
 
-* Install Browserify -> `npm install -g browserify`
-* Bundle -> `npm run bundle`
+### Global Dependencies
 
-File will appear in `/public/colorfulcharacters.js`
+* Browersify -> `npm install -g browserify`
+* UglifyJS -> `npm install -g uglify-js`
+
+### Run
+
+`npm run bundle`
+
+Files will appear in `/public/
+
+## To Test
+
+`npm test`

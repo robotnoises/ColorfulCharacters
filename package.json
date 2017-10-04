@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "bundle": "browserify src/index.js > public/colorfulcharacters.js && browserify src/index.js | uglifyjs > public/colorfulcharacters.min.js"
   },
   "author": "David Nichols",
   "license": "MIT",
   "devDependencies": {
     "babel-eslint": "^8.0.1",
-    "eslint": "^4.8.0"
+    "eslint": "^4.8.0",
+    "jest": "^21.2.1"
   }
 }
