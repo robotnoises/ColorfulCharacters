@@ -1,8 +1,16 @@
-var utils = require('./utils');
 require('./polyfills');
+var utils = require('./utils');
 
-// ColorfulCharacters
-
+/**
+ * Result()
+ *
+ * @param {string} str 
+ * @param {number} pos 
+ * @param {number} len
+ * 
+ * Represents a matched string, to be used later
+ * to reconstruct the string
+ */
 function Result(str, pos, len) {
   this.str = str;
   this.pos = pos;
@@ -10,36 +18,29 @@ function Result(str, pos, len) {
 }
 
 /**
- * 
- * @param {*} characterMap 
- * @param {*} options 
- */
-
-/**
- * Example of a charactermap
+ * ColorfulCharacters()
+ *
+ * @param {object} characterMap
+ * @param {object} options
+ *
+ * The main ColorfulCharacters object
+ *  
+ * Example of a charactermap:
  * {
-     "(": "#f00",
-     ")": "#f00",
-     "/[a-zA-z]/": "#0f0",
-     "/[*+-/]/": "#00f"
-   }
- */
+ *   "_": "#f00abc",
+ *   "/[a-zA-z]/": "#0f0",
+ *   "/[*+-/]/": "#00f"
+ * }
+*/
 
 function ColorfulCharacters(characterMap, options) {
   this._characterMap = characterMap;
-  this._resultMap = new Map();
-  this._options = {
-    changeColor: options ? options.changeColor : true,
-    changeBackground: options ? options.changeBackground : false
-  };
-  this._hasRegex = Object.keys(characterMap).some(function (key) {
-    return utils.isRegex(key);
-  });
+  this._options = utils.getOptions(options);
+  this._hasRegex = utils.hasRegex(characterMap);
 }
 
 ColorfulCharacters.prototype.render = function (input) {
   var that = this;
-  var stringToRender = input;
   var buffer = [];
   var skips = {};
 
@@ -49,34 +50,35 @@ ColorfulCharacters.prototype.render = function (input) {
 
   // First, sweep the input for any regex matches
   if (that._hasRegex) {
-    var firstPass = input;
-
-    Object.keys(that._characterMap).filter(function (key) {
-      return utils.isRegex(key);
-    })
+    Object.keys(that._characterMap)
+      .filter(utils.isRegex)
       .forEach(function (key) {
-        var strippedRegex = key.substr(1, (key.length - 2));
-        var re = new RegExp(strippedRegex, 'gi');
+          var strippedRegex = key.substr(1, (key.length - 2));
+          var re = new RegExp(strippedRegex, 'gi');
 
-        firstPass.replace(re, function (match, offset, str) {
-          buffer.push(new Result(utils.colorize(match, that._characterMap[key], that._options), offset, match.length));
-          skips[offset] = true;
-          return;
+          input.replace(re, function (match, offset, str) {
+            buffer.push(new Result(utils.colorize(match, that._characterMap[key], that._options), offset, match.length));
+            skips[offset] = true;
+            return;
+          });
         });
-      });
   }
-  
+
   // Process the remaining characters that haven't been captured by regex
-  stringToRender.split('').forEach(function (char, index) {
+  input.split('').forEach(function (char, index) {
     if (!skips[index] && that._characterMap[char]) {
       buffer.push(new Result(utils.colorize(char, that._characterMap[char], that._options), index, 1));
     }
   });
 
+  // Reverse the buffer of changes to make to the original input. It's important
+  // to do this in reverse as to not impact the offset of where we need to re-insert
+  // the new strings.
   buffer.sort(function (a, b) {
     return b.pos - a.pos;
   })
   .forEach(function (item) {
+    // Replace the old string with the new colorized version
     input = input.replaceAt(item.pos, item.len, item.str);
   });
 

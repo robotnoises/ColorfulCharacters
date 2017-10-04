@@ -48,6 +48,12 @@ function isRegex(input) {
   return input && input.length >= 3 && input.indexOf('/') === 0 && input.split('').pop() === '/';
 }
 
+function hasRegex(characterMap) {
+  return Object.keys(characterMap).some(function (key) {
+    return isRegex(key);
+  });
+}
+
 /**
  * colorize()
  *
@@ -65,8 +71,24 @@ function colorize(character, color, options) {
   return '<span style="color: ' + colorStyle + 'background: ' + backgroundStyle + '">' + character + '</span>';
 }
 
+/**
+ * getOptions()
+ *
+ * @param {object} options
+ * 
+ * Get options w/defaults for ColorfulCharacters object
+ */
+function getOptions(options) {
+  return {
+    changeColor: options ? options.changeColor : true,
+    changeBackground: options ? options.changeBackground : false
+  };
+}
+
 module.exports = {
   hex2rgb: hex2rgb,
   isRegex: isRegex,
-  colorize: colorize
+  hasRegex: hasRegex,
+  colorize: colorize,
+  getOptions: getOptions,
 };
