@@ -41,6 +41,9 @@ describe('ColorfulCharacters (main)', function () {
       expect(colorizeWrapper.bind({})).toThrowError(errorText);
       expect(colorizeWrapper.bind(true)).toThrowError(errorText);
     });
+    test('Empty string returns empty string', function () {
+      expect(cc.colorize('')).toBe('');
+    });
     test('"No match" just returns original input', function () {
       expect(cc.colorize(noMatchText)).toBe(noMatchText);
     });

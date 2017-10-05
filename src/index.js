@@ -38,12 +38,17 @@ function ColorfulCharacters(characterMap, options) {
   this._hasRegex = utils.hasRegex(characterMap);
 }
 
+/**
+ * .colorize()
+ * 
+ * @params {string} input
+ */
 ColorfulCharacters.prototype.colorize = function (input) {
   var that = this;
   var buffer = [];
   var skips = {};
 
-  if (!input || typeof input !== 'string') {
+  if (typeof input !== 'string') {
     throw new Error('input must be a string');
   }
 
