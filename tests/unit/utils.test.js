@@ -104,4 +104,45 @@ describe('utils', function () {
       })).toBe(true);
     });
   });
+
+  /**
+   * .colorize()
+   */
+
+  describe('.colorize()', function () {
+    test('no character or color returns empty string', function () {
+      expect(utils.colorize()).toBe('');
+    });
+    test('character but no color returns same character', function () {
+      expect(utils.colorize('a')).toBe('a');
+    });
+    test('no character or color returns empty string', function () {
+      expect(utils.colorize()).toBe('');
+    });
+    test('character and color produces correct colorized span output', function () {
+      expect(utils.colorize('a', '#f00'))
+        .toBe('<span style="color: #f00;background: ">a</span>');
+    });
+    test('character and color/background produces correct colorized span output', function () {
+      expect(utils.colorize('a', '#f00', { changeBackground: true }))
+        .toBe('<span style="color: #f00;background: rgba(255,0,0,0.05);">a</span>');
+    });
+  });
+
+  /**
+   * .getOptions()
+   */
+
+  describe('.getOptions()', function () {
+    test('providing no options should result in defaults', function () {
+      expect(utils.getOptions().changeColor).toBe(true);
+      expect(utils.getOptions().changeBackground).toBe(false);
+    });
+    test('can change "changeColor" to false', function () {
+      expect(utils.getOptions({ changeColor: false }).changeColor).toBe(false);
+    });
+    test('can change "changeBackground" to true', function () {
+      expect(utils.getOptions({ changeBackground: true }).changeBackground).toBe(true);
+    });
+  });
 });

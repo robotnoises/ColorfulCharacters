@@ -70,13 +70,15 @@ function hasRegex(characterMap) {
 function colorize(character, color, options) {
   var colorStyle = '';
   var backgroundStyle = '';
+  var changeColor = options && options.changeColor ? options.changeColor : true;
+  var changeBackground = options && options.changeBackground ? options.changeBackground : false;
 
   if (!character || !color) {
     return character || '';
   }
 
-  colorStyle = options.changeColor ? color + ';' : '';
-  backgroundStyle = options.changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
+  colorStyle = changeColor ? color + ';' : '';
+  backgroundStyle = changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
 
   return '<span style="color: ' + colorStyle + 'background: ' + backgroundStyle + '">' + character + '</span>';
 }
