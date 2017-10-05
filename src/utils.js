@@ -43,10 +43,19 @@ function hex2rgb(hex) {
  * Testing to see if it's in this format /foo/
  */
 function isRegex(input) {
-  return input && input.length >= 3 && input.indexOf('/') === 0 && input.split('').pop() === '/';
+  return !!input && input.length >= 3 && input.indexOf('/') === 0 && input.split('').pop() === '/';
 }
 
+/**
+ * hasRegex()
+ *
+ * @param {object} characterMap 
+ */
 function hasRegex(characterMap) {
+  if (typeof characterMap !== 'object') {
+    return false;
+  }
+
   return Object.keys(characterMap).some(function (key) {
     return isRegex(key);
   });
