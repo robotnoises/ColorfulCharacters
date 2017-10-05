@@ -30,10 +30,15 @@
           changeBackground: true
         });
 
-        btn.addEventListener('click', function () {
-          editor.innerHTML = cc.render(editor.innerText);
-        });
-      })();
+        function colorize(e) {
+          editor.innerHTML = cc.colorize(editor.innerText);
+        }
+        
+        btn.addEventListener('click', colorize);
+
+        // Init
+        colorize();
+      } ());
     </script>
   </body>
 </html>

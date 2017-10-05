@@ -32,14 +32,13 @@ function Result(str, pos, len) {
  *   "/[*+-/]/": "#00f"
  * }
 */
-
 function ColorfulCharacters(characterMap, options) {
   this._characterMap = characterMap;
   this._options = utils.getOptions(options);
   this._hasRegex = utils.hasRegex(characterMap);
 }
 
-ColorfulCharacters.prototype.render = function (input) {
+ColorfulCharacters.prototype.colorize = function (input) {
   var that = this;
   var buffer = [];
   var skips = {};
@@ -71,9 +70,9 @@ ColorfulCharacters.prototype.render = function (input) {
     }
   });
 
-  // Reverse the buffer of changes to make to the original input. It's important
-  // to do this in reverse as to not impact the offset of where we need to re-insert
-  // the new strings.
+  // Sort the buffer of changes in reverse-order of their position. 
+  // It's importan to do this in reverse as to not impact the offset 
+  // of where we need to re-insert the new strings.
   buffer.sort(function (a, b) {
     return b.pos - a.pos;
   })
@@ -85,4 +84,4 @@ ColorfulCharacters.prototype.render = function (input) {
   return input;
 };
 
-window.ColorfulCharacters = ColorfulCharacters;
+module.exports = ColorfulCharacters;

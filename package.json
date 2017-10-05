@@ -2,10 +2,10 @@
   "name": "colorfulcharacters",
   "version": "0.0.1",
   "description": "",
-  "main": "public/colorfulcharacters.js",
+  "main": "public/colorfulcharacters.cjs.js",
   "scripts": {
     "test": "jest",
-    "bundle": "browserify src/index.js > public/colorfulcharacters.js && browserify src/index.js | uglifyjs > public/colorfulcharacters.min.js"
+    "bundle": "browserify src/amd.js > public/colorfulcharacters.js && browserify src/amd.js | uglifyjs > public/colorfulcharacters.min.js"
   },
   "author": "David Nichols",
   "license": "MIT",

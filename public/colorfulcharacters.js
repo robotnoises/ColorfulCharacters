@@ -1,4 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// Run Browserify => npm run bundle
+window.ColorfulCharacters = require('./index');
+
+},{"./index":2}],2:[function(require,module,exports){
 var utils = require('./utils');
 require('./polyfills');
 
@@ -33,14 +37,13 @@ function Result(str, pos, len) {
  *   "/[*+-/]/": "#00f"
  * }
 */
-
 function ColorfulCharacters(characterMap, options) {
   this._characterMap = characterMap;
   this._options = utils.getOptions(options);
   this._hasRegex = utils.hasRegex(characterMap);
 }
 
-ColorfulCharacters.prototype.render = function (input) {
+ColorfulCharacters.prototype.colorize = function (input) {
   var that = this;
   var buffer = [];
   var skips = {};
@@ -72,9 +75,9 @@ ColorfulCharacters.prototype.render = function (input) {
     }
   });
 
-  // Reverse the buffer of changes to make to the original input. It's important
-  // to do this in reverse as to not impact the offset of where we need to re-insert
-  // the new strings.
+  // Sort the buffer of changes in reverse-order of their position. 
+  // It's importan to do this in reverse as to not impact the offset 
+  // of where we need to re-insert the new strings.
   buffer.sort(function (a, b) {
     return b.pos - a.pos;
   })
@@ -86,9 +89,9 @@ ColorfulCharacters.prototype.render = function (input) {
   return input;
 };
 
-window.ColorfulCharacters = ColorfulCharacters;
+module.exports = ColorfulCharacters;
 
-},{"./polyfills":2,"./utils":3}],2:[function(require,module,exports){
+},{"./polyfills":3,"./utils":4}],3:[function(require,module,exports){
 /* eslint-disable */
 
 module.exports = (function () {
@@ -190,7 +193,7 @@ module.exports = (function () {
   }
 }());
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // Utils
 
 /**
@@ -236,10 +239,19 @@ function hex2rgb(hex) {
  * Testing to see if it's in this format /foo/
  */
 function isRegex(input) {
-  return input && input.length >= 3 && input.indexOf('/') === 0 && input.split('').pop() === '/';
+  return !!input && input.length >= 3 && input.indexOf('/') === 0 && input.split('').pop() === '/';
 }
 
+/**
+ * hasRegex()
+ *
+ * @param {object} characterMap 
+ */
 function hasRegex(characterMap) {
+  if (typeof characterMap !== 'object') {
+    return false;
+  }
+
   return Object.keys(characterMap).some(function (key) {
     return isRegex(key);
   });
@@ -254,13 +266,15 @@ function hasRegex(characterMap) {
 function colorize(character, color, options) {
   var colorStyle = '';
   var backgroundStyle = '';
+  var changeColor = options && options.changeColor ? options.changeColor : true;
+  var changeBackground = options && options.changeBackground ? options.changeBackground : false;
 
   if (!character || !color) {
     return character || '';
   }
 
-  colorStyle = options.changeColor ? color + ';' : '';
-  backgroundStyle = options.changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
+  colorStyle = changeColor ? color + ';' : '';
+  backgroundStyle = changeBackground ? 'rgba(' + hex2rgb(color) + '0.05);' : '';
 
   return '<span style="color: ' + colorStyle + 'background: ' + backgroundStyle + '">' + character + '</span>';
 }
